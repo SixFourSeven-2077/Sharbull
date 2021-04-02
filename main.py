@@ -1,7 +1,5 @@
 import discord
-
 from discord.ext import commands
-import sharbull__db
 from sharbull__utility.main import seconds_to_text, seconds_to_dhms
 from sharbull__db.main import *
 from colorama import Fore, Style, init
@@ -14,14 +12,12 @@ import os
 from AntiSpam import AntiSpamHandler
 from AntiSpam.ext import AntiSpamTracker
 
-import sqlite3
-
 init()  # windows
 
 intents = discord.Intents.default()
 intents.members = True
 
-with open("token","r") as f: # Token goes in file "token"
+with open("token", "r") as f:  # Token goes in file "token"
     TOKEN = f.read()
 
 bot = commands.Bot(command_prefix="!!", intents=intents)
@@ -29,6 +25,7 @@ bot.remove_command("help")
 bot.handler = AntiSpamHandler(bot, no_punish=True)
 bot.tracker = AntiSpamTracker(bot.handler, 3)
 bot.handler.register_extension(bot.tracker)
+
 
 async def is_admin(member: discord.Member):
     if member.guild_permissions.administrator is True:
@@ -59,29 +56,25 @@ async def on_message(message):
         message_log = "User {.mention}".format(msg.author) + " - Bad Reputation points : " + str(points) + "\n"
         if points <= 3:
             message_log += "User has been warned"
-            embed = discord.Embed(description="{.mention} : stop spamming".format(msg.author))
-            await msg.channel.send(embed=embed)
+            description = "{.mention} : stop spamming".format(msg.author)
             increase_user_flag(user_id=msg.author.id, reports_to_add=1)
-
         elif points <= 10:
             message_log += "User has been muted (removed verified role)"
-            embed = discord.Embed(description="{.mention} has been muted for spamming".format(msg.author))
-            await msg.channel.send(embed=embed)
+            description = "{.mention} has been muted for spamming"
             await msg.author.remove_roles(msg.guild.get_role(verified_role_id))
             increase_user_flag(user_id=msg.author.id, mutes_to_add=1)
-
         elif points <= 30:
             message_log += "User has been kicked"
-            embed = discord.Embed(description="{.mention} has been kicked for spamming".format(msg.author))
-            await msg.channel.send(embed=embed)
+            description="{.mention} has been kicked for spamming".format(msg.author)
             increase_user_flag(user_id=msg.author.id, kicks_to_add=1)
+            await msg.author.kick()
         else:
             message_log += "User has been banned"
-            embed = discord.Embed(description="{.mention} has been banned for spamming".format(msg.author))
-            await msg.channel.send(embed=embed)
-            await msg.author.remove_roles(msg.guild.get_role(verified_role_id))
+            description="{.mention} has been banned for spamming".format(msg.author)
+            await msg.author.ban()
             increase_user_flag(user_id=msg.author.id, bans_to_add=1)
-
+        embed = discord.Embed(description=description)
+        await msg.channel.send(embed=embed)
         await log(msg.guild.get_channel(log_channel_id), message_log)
 
         bot.tracker.remove_punishments(message)
@@ -91,7 +84,8 @@ async def on_message(message):
 async def log(channel: discord.TextChannel, message: str):
     if channel is not None:
         embed = discord.Embed(title="New Log", description=message, timestamp=datetime.utcnow())
-        embed.set_footer(text="Sharbull Security Bot - Timezone : UTC",icon_url="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png")
+        embed.set_footer(text="Sharbull Security Bot - Timezone : UTC",
+                         icon_url="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png")
         await channel.send(embed=embed)
     else:
         print("NO LOGS SETUPED")
@@ -105,7 +99,6 @@ async def on_member_join(member):
 
     add_user(member.id)
     captcha_fails, mutes, reports, kicks, bans = check_user_flags(member.id)
-
     trust_score = 14
     now = datetime.now()
     created_at = member.created_at
@@ -177,7 +170,7 @@ async def on_member_join(member):
     embed = discord.Embed(title="Greetings, welcome to **{}**".format(member.guild.name),
                           description="Please complete the following captcha to continue.\n" +
                                       "You have 60 seconds to reply or your access will be denied." +
-                                      "\nThere are only **lowercase** letters." # in bold because ppl cant read
+                                      "\nThere are only **lowercase** letters."  # in bold because ppl cant read
                           )
     embed.set_thumbnail(url=member.guild.icon_url)
     embed.set_footer(
@@ -226,42 +219,37 @@ async def on_member_join(member):
 
 @bot.command()
 async def help(ctx, page: str = None):
-    if page is None:
-        embed = discord.Embed(title="Welcome to Sharbull Security Bot!",
-                              description="Sharbull is a ready to use bot deployable in minutes, aimed to filter out "
-                                          "selfbot accounts by detecting fake accounts and using a captcha system. " +
-                                          "With its built-in anti-spam filter this bot will also rate limit humans who flood the chat, as " +
-                                          "Sharbull has a strict policy on spammers and raiders, zero tolerance is not an option, it's mandatory.\n" +
-                                          "Our bot is using a shared database across all servers in order to detect toxic people before they even " +
-                                          "join your server.\n\n" +
-                                          "If you are a server administrator, you can start by using the command ``!!setup``\n" +
-                                          "Take a look at other commands by sending ``!!help commands`` or ``!!help security``")
-        embed.set_footer(text="Sharbull Security - Developed by 647",
-                         icon_url="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png")
-        await ctx.send(embed=embed)
+    footer = "Sharbull Security - Developed by 647"
+    icon_url = "https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png"
     if page == "commands":
-        embed = discord.Embed(title="About the commands",
-                              description="``!!setup`` : Open minimum configuration menu\n - Permission required : administrator\n\n" +
-                                          "``!!mute <Member>`` : Mute a member and report their account to the Sharbull database\n - Permission required : mute members\n\n" +
-                                          "``!!kick <Member>`` : Kick a member and report their account to the Sharbull database\n - Permission required : kick members\n\n" +
-                                          "``!!ban <Member>`` : Ban a member and report their account to the Sharbull database\n - Permission required : ban members\n\n" +
-                                          "``!!report <Member> <reason>`` : Report an account to the server and to the Sharbull database\n - Permission required : None\n\n"
-                              )
-        embed.set_footer(text="Sharbull Security - Developed by 647",
-                         icon_url="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png")
-        await ctx.send(embed=embed)
-    if page == "security":
-        embed = discord.Embed(title="About the security",
-                              description="Sharbull automatically detects if an account is fake or likely to be a "
-                                          "selfbot by checking their avatar, creation date, user flags and reports. "
-                                          "With this data, a trust score is calculated and further actions may be taken."
-                                          "An antispam is also included, which automatically flags the user. Depending on their trust score, they may get muted, kicked or even banned."
-                              )
-        embed.set_footer(text="Sharbull Security - Developed by 647",
-                         icon_url="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png")
-        await ctx.send(embed=embed)
+        title = "About the commands",
+        description = "``!!setup`` : Open minimum configuration menu\n - Permission required : administrator\n\n"
+        "``!!mute <Member>`` : Mute a member and report their account to the Sharbull database\n - Permission required : mute members\n\n"
+        "``!!kick <Member>`` : Kick a member and report their account to the Sharbull database\n - Permission required : kick members\n\n"
+        "``!!ban <Member>`` : Ban a member and report their account to the Sharbull database\n - Permission required : ban members\n\n" \
+        "``!!report <Member> <reason>`` : Report an account to the server and to the Sharbull database\n - Permission required : None\n\n"
 
+    elif page == "security":
+        title = "About the security"
+        description = "Sharbull automatically detects if an account is fake or likely to be a " \
+                      "selfbot by checking their avatar, creation date, user flags and reports. " \
+                      "With this data, a trust score is calculated and further actions may be taken." \
+                      "An antispam is also included, which automatically flags the user. Depending on their trust " \
+                      "score, they may get muted, kicked or even banned. "
+    else:
+        title = "Welcome to Sharbull Security Bot!"
+        description = "Sharbull is a ready to use bot deployable in minutes, aimed to filter out " \
+                      "selfbot accounts by detecting fake accounts and using a captcha system. " \
+                      "With its built-in anti-spam filter this bot will also rate limit humans who flood the chat, as " \
+                      "Sharbull has a strict policy on spammers and raiders, zero tolerance is not an option, it's mandatory.\n" \
+                      "Our bot is using a shared database across all servers in order to detect toxic people before they even " \
+                      "join your server.\n\n" \
+                      "If you are a server administrator, you can start by using the command ``!!setup``\n" \
+                      "Take a look at other commands by sending ``!!help commands`` or ``!!help security``"
 
+    embed = discord.Embed(title=title, description=description)
+    embed.set_footer(text=footer, icon_url=icon_url)
+    await ctx.send(embed=embed)
 
 
 @commands.bot_has_permissions(administrator=True)
