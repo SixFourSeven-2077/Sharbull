@@ -48,36 +48,37 @@ async def on_ready():
 async def on_message(message):
     msg = message
     add_user(message.author.id)
-    await bot.handler.propagate(message)
-    if bot.tracker.is_spamming(message):
-        log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(message.guild.id)
+    if not isinstance(message.channel, discord.DMChannel):
+        await bot.handler.propagate(message)
+        if bot.tracker.is_spamming(message):
+            log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(message.guild.id)
 
-        points = calculate_reputation(message.author.id)
-        message_log = "User {.mention}".format(msg.author) + " - Bad Reputation points : " + str(points) + "\n"
-        if points <= 3:
-            message_log += "User has been warned"
-            description = "{.mention} : stop spamming".format(msg.author)
-            increase_user_flag(user_id=msg.author.id, reports_to_add=1)
-        elif points <= 10:
-            message_log += "User has been muted (removed verified role)"
-            description = "{.mention} has been muted for spamming"
-            await msg.author.remove_roles(msg.guild.get_role(verified_role_id))
-            increase_user_flag(user_id=msg.author.id, mutes_to_add=1)
-        elif points <= 30:
-            message_log += "User has been kicked"
-            description="{.mention} has been kicked for spamming".format(msg.author)
-            increase_user_flag(user_id=msg.author.id, kicks_to_add=1)
-            await msg.author.kick()
-        else:
-            message_log += "User has been banned"
-            description="{.mention} has been banned for spamming".format(msg.author)
-            await msg.author.ban()
-            increase_user_flag(user_id=msg.author.id, bans_to_add=1)
-        embed = discord.Embed(description=description)
-        await msg.channel.send(embed=embed)
-        await log(msg.guild.get_channel(log_channel_id), message_log)
+            points = calculate_reputation(message.author.id)
+            message_log = "User {.mention}".format(msg.author) + " - Bad Reputation points : " + str(points) + "\n"
+            if points <= 3:
+                message_log += "User has been warned"
+                description = "{.mention} : stop spamming".format(msg.author)
+                increase_user_flag(user_id=msg.author.id, reports_to_add=1)
+            elif points <= 10:
+                message_log += "User has been muted (removed verified role)"
+                description = "{.mention} has been muted for spamming"
+                await msg.author.remove_roles(msg.guild.get_role(verified_role_id))
+                increase_user_flag(user_id=msg.author.id, mutes_to_add=1)
+            elif points <= 30:
+                message_log += "User has been kicked"
+                description="{.mention} has been kicked for spamming".format(msg.author)
+                increase_user_flag(user_id=msg.author.id, kicks_to_add=1)
+                await msg.author.kick()
+            else:
+                message_log += "User has been banned"
+                description="{.mention} has been banned for spamming".format(msg.author)
+                await msg.author.ban()
+                increase_user_flag(user_id=msg.author.id, bans_to_add=1)
+            embed = discord.Embed(description=description)
+            await msg.channel.send(embed=embed)
+            await log(msg.guild.get_channel(log_channel_id), message_log)
 
-        bot.tracker.remove_punishments(message)
+            bot.tracker.remove_punishments(message)
     await bot.process_commands(message)
 
 
