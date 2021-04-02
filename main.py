@@ -150,11 +150,11 @@ async def on_member_join(member):
     await log(member.guild.get_channel(log_channel_id), message)
 
     if captcha_level == 2 and trust_score > 9:
-        await log(message.guild.get_channel(log_channel_id), "Trust score is high enough, captcha skipped")
+        await log(member.guild.get_channel(log_channel_id), "Trust score is high enough, captcha skipped")
         await member.add_roles(member.guild.get_role(verified_role_id))
         return True
     if captcha_level == 1:
-        await log(message.guild.get_channel(log_channel_id), "Captcha level is set to ONE, skipped")
+        await log(member.guild.get_channel(log_channel_id), "Captcha level is set to ONE, skipped")
         try:
             await member.add_roles(member.guild.get_role(verified_role_id))
         except:
