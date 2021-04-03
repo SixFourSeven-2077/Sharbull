@@ -3,6 +3,7 @@ from discord.ext import commands
 from sharbul__cogs import Setup, Mod, User, Events
 from AntiSpam import AntiSpamHandler
 from AntiSpam.ext import AntiSpamTracker
+from sharbull__utility.main import get_prefix
 
 intents = discord.Intents.default()
 intents.members = True
@@ -10,7 +11,7 @@ intents.members = True
 with open("token", "r") as f:  # Token goes in file "token"
     TOKEN = f.read()
 
-bot = commands.Bot(command_prefix="!!", intents=intents)
+bot = commands.Bot(command_prefix=get_prefix, intents=intents)
 bot.remove_command("help")
 bot.handler = AntiSpamHandler(bot, no_punish=True)
 bot.tracker = AntiSpamTracker(bot.handler, 3)

@@ -52,6 +52,21 @@ class ModCommandsCog(commands.Cog):
         if ctx.guild.get_channel(log_channel_id) is not None:
             await log(ctx.guild.get_channel(log_channel_id), message)
 
+    @commands.command(pass_context=True)
+    @commands.has_permissions(administrator=True)  # ensure that only administrators can use this command
+    async def set_prefix(self, ctx, prefix):  # command: bl!changeprefix ...
+        with open('config/customprefixes.json', 'r') as f:
+            prefixes = json.load(f)
+
+        prefixes[str(ctx.guild.id)] = prefix
+
+        with open('config/customprefixes.json', 'w') as f:  # writes the new prefix into the .json
+            json.dump(prefixes, f, indent=4)
+
+        message = "✅ Prefix is now ``{}``".format(prefix)
+        embed = discord.Embed(description=message)
+        await ctx.send(embed=embed)
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         message = ""

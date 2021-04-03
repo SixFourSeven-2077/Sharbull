@@ -3,6 +3,16 @@ from sharbull__db.main import *
 from datetime import datetime, timedelta
 
 
+def get_prefix(client, message):
+    with open('config/customprefixes.json', 'r') as f:
+        prefixes = json.load(f)
+
+    try:
+        return prefixes[str(message.guild.id)]
+    except KeyError:
+        return "!!"
+
+
 def seconds_to_text(secs):
     days, hours, minutes, seconds = seconds_to_dhms(secs)
     result = ("{0} day{1}, ".format(days, "s" if days!=1 else "") if days else "") + \
