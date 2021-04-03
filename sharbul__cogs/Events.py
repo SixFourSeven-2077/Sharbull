@@ -25,7 +25,13 @@ class EventsCog(commands.Cog):
         pingms = round(self.bot.latency * 1000)
         print("Commander's latency : " + Fore.YELLOW +
               "{}".format(pingms) + Fore.GREEN + "ms\n" + Style.RESET_ALL)
+
+        if len(self.bot.guilds) < 20:
+            for server in self.bot.guilds:
+                print(server.name,server.id)
         Tasks.BackgroundTasks.update_presence.start(self)
+
+
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -62,6 +68,8 @@ class EventsCog(commands.Cog):
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
+        now = datetime.now().strftime("%Y %m %d - %H:%M:%S")
+        print(now, "New captcha started for", member.id)
         log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(member.guild.id)
         if security_activated is None or member.bot is True:
             return False
