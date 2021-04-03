@@ -384,7 +384,7 @@ async def report(ctx, member: discord.User, *, reason):
     await ctx.message.delete()
     log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(ctx.guild.id)
     message = "✅ Member {.mention} has been reported : ``{}``\nReporter : {.mention}".format(member, reason,
-                                                                                             ctx.author.id)
+                                                                                             ctx.author)
     embed = discord.Embed(description=message)
     await ctx.author.send(embed=embed)
     increase_user_flag(user_id=member.id, reports_to_add=1)
