@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from sharbul__cogs import Setup, Mod, User, Events
+from sharbul__cogs import Setup, Mod, User, Events, Errors
 from AntiSpam import AntiSpamHandler
 from AntiSpam.ext import AntiSpamTracker
 from sharbull__utility.main import get_prefix
@@ -10,9 +10,6 @@ intents.members = True
 
 with open("token", "r") as f:  # Token goes in file "token"
     TOKEN = f.read()
-
-print(commands.when_mentioned_or(get_prefix))
-
 
 def when_mentioned_or_function(func):
     def inner(bot, message):
@@ -33,6 +30,7 @@ bot.handler.register_extension(bot.tracker)
 
 # Cogs
 
+bot.add_cog(Errors.ErrorCog(bot))
 bot.add_cog(Setup.SetupCommandsCog(bot))
 bot.add_cog(Mod.ModCommandsCog(bot))
 bot.add_cog(User.UserCommandsCog(bot))
