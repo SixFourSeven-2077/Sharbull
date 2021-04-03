@@ -6,7 +6,6 @@ from datetime import datetime, timedelta
 def get_prefix(client, message):
     with open('config/customprefixes.json', 'r') as f:
         prefixes = json.load(f)
-
     try:
         return prefixes[str(message.guild.id)]
     except KeyError:

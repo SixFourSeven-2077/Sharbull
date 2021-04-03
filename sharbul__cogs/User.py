@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 from sharbull__db.main import *
 from sharbull__utility.main import log, get_prefix
-
+import string
 
 class UserCommandsCog(commands.Cog):
     def __init__(self, bot):
@@ -15,32 +15,32 @@ class UserCommandsCog(commands.Cog):
         prefix = get_prefix(self, ctx.message)
         if page == "commands":
             title = "About the commands"
-            description = "``",prefix,"setup`` : Open minimum configuration menu\n - Permission required : administrator\n\n" \
-            "``",prefix,"mute <Member>`` : Mute a member and report their account to the Sharbull database\n - Permission required : mute members\n\n"\
-            "``",prefix,"kick <Member>`` : Kick a member and report their account to the Sharbull database\n - Permission required : kick members\n\n"\
-            "``",prefix,"ban <Member>`` : Ban a member and report their account to the Sharbull database\n - Permission required : ban members\n\n" \
-            "``",prefix,"report <Member> <reason>`` : Report an account to the server and to the Sharbull database\n - Permission required : None\n\n" \
-            "``",prefix,"set_prefix <prefix>`` : Sets a new prefix for this bot\n - Permission required : administrator\n\n"\
-            "You can also tag me instead of using the prefix"
+            description = "".join(("``",prefix,"setup`` : Open minimum configuration menu\n - Permission required : administrator\n\n",
+            "``",prefix,"mute <Member>`` : Mute a member and report their account to the Sharbull database\n - Permission required : mute members\n\n",
+            "``",prefix,"kick <Member>`` : Kick a member and report their account to the Sharbull database\n - Permission required : kick members\n\n",
+            "``",prefix,"ban <Member>`` : Ban a member and report their account to the Sharbull database\n - Permission required : ban members\n\n",
+            "``",prefix,"report <Member> <reason>`` : Report an account to the server and to the Sharbull database\n - Permission required : None\n\n",
+            "``",prefix,"set_prefix <prefix>`` : Sets a new prefix for this bot\n - Permission required : administrator\n\n",
+            "You can also tag me instead of using the prefix"))
 
         elif page == "security":
             title = "About the security"
-            description = "Sharbull automatically detects if an account is fake or likely to be a " \
-                          "selfbot by checking their avatar, creation date, user flags and reports. " \
-                          "With this data, a trust score is calculated and further actions may be taken." \
-                          "An antispam is also included, which automatically flags the user. Depending on their trust " \
-                          "score, they may get muted, kicked or even banned. "
+            description = "".join(("Sharbull automatically detects if an account is fake or likely to be a ",
+                          "selfbot by checking their avatar, creation date, user flags and reports. ",
+                          "With this data, a trust score is calculated and further actions may be taken.",
+                          "An antispam is also included, which automatically flags the user. Depending on their trust ",
+                          "score, they may get muted, kicked or even banned. "))
         else:
             title = "Welcome to Sharbull Security Bot!"
-            description = "Sharbull is a ready to use bot deployable in minutes, aimed to filter out " \
-                          "selfbot accounts by detecting fake accounts and using a captcha system. " \
-                          "With its built-in anti-spam filter this bot will also rate limit humans who flood the chat, as " \
-                          "Sharbull has a strict policy on spammers and raiders, zero tolerance is not an option, it's mandatory.\n" \
-                          "Our bot is using a shared database across all servers in order to detect toxic people before they even " \
-                          "join your server.\n\n" \
-                          "If you are a server administrator, you can start by using the command ``",prefix,"setup``\n" \
-                          "Take a look at other commands by sending ``",prefix,"help commands`` or ``",prefix,"help security``" \
-                          "You can also tag me instead of using the prefix""You can also tag me instead of using the prefix"
+            description = "".join(("Sharbull is a ready to use bot deployable in minutes, aimed to filter out ",
+                          "selfbot accounts by detecting fake accounts and using a captcha system. ",
+                          "With its built-in anti-spam filter this bot will also rate limit humans who flood the chat, as ",
+                          "Sharbull has a strict policy on spammers and raiders, zero tolerance is not an option, it's mandatory.\n",
+                          "Our bot is using a shared database across all servers in order to detect toxic people before they even ",
+                          "join your server.\n\n",
+                          "If you are a server administrator, you can start by using the command ``",prefix,"setup``\n",
+                          "Take a look at other commands by sending ``",prefix,"help commands`` or ``",prefix,"help security``\n\n",
+                          "You can also tag me instead of using the prefix"))
 
         embed = discord.Embed(title=title, description=description)
         embed.set_footer(text=footer, icon_url=icon_url)
