@@ -155,11 +155,14 @@ class EventsCog(commands.Cog):
             text="Sharbull Security Guard - This server enforces a high security verification",
             icon_url="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png"
         )
+        file = discord.File("captcha/" + str(member.id) + ".png", filename="image.png")
+        embed.set_image(url="attachment://image.png")
         await member.send(
-            embed=embed
+            embed=embed,
+            file=file
         )
 
-        await member.send(file=discord.File("captcha/" + str(member.id) + ".png"))
+        #await member.send(file=discord.File("captcha/" + str(member.id) + ".png"))
 
         def check(message):
             return message.content == string_to_guess and message.channel == message.author.dm_channel
