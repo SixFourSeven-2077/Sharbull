@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from sharbull__db.main import *
-from sharbull__utility.main import log
+from sharbull__utility.main import log, get_prefix
 
 
 class UserCommandsCog(commands.Cog):
@@ -12,13 +12,16 @@ class UserCommandsCog(commands.Cog):
     async def help(self, ctx, page: str = None):
         footer = "Sharbull Security - Developed by 647"
         icon_url = "https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png"
+        prefix = get_prefix(self, ctx.message)
         if page == "commands":
             title = "About the commands"
-            description = "``!!setup`` : Open minimum configuration menu\n - Permission required : administrator\n\n" \
-            "``!!mute <Member>`` : Mute a member and report their account to the Sharbull database\n - Permission required : mute members\n\n"\
-            "``!!kick <Member>`` : Kick a member and report their account to the Sharbull database\n - Permission required : kick members\n\n"\
-            "``!!ban <Member>`` : Ban a member and report their account to the Sharbull database\n - Permission required : ban members\n\n" \
-            "``!!report <Member> <reason>`` : Report an account to the server and to the Sharbull database\n - Permission required : None\n\n"
+            description = "``",prefix,"setup`` : Open minimum configuration menu\n - Permission required : administrator\n\n" \
+            "``",prefix,"mute <Member>`` : Mute a member and report their account to the Sharbull database\n - Permission required : mute members\n\n"\
+            "``",prefix,"kick <Member>`` : Kick a member and report their account to the Sharbull database\n - Permission required : kick members\n\n"\
+            "``",prefix,"ban <Member>`` : Ban a member and report their account to the Sharbull database\n - Permission required : ban members\n\n" \
+            "``",prefix,"report <Member> <reason>`` : Report an account to the server and to the Sharbull database\n - Permission required : None\n\n" \
+            "``",prefix,"set_prefix <prefix>`` : Sets a new prefix for this bot\n - Permission required : administrator\n\n"\
+            "You can also tag me instead of using the prefix"
 
         elif page == "security":
             title = "About the security"

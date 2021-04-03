@@ -11,7 +11,7 @@ intents.members = True
 with open("token", "r") as f:  # Token goes in file "token"
     TOKEN = f.read()
 
-bot = commands.Bot(command_prefix=get_prefix, intents=intents)
+bot = commands.Bot(command_prefix=commands.when_mentioned_or(get_prefix), intents=intents)
 bot.remove_command("help")
 bot.handler = AntiSpamHandler(bot, no_punish=True)
 bot.tracker = AntiSpamTracker(bot.handler, 3)
