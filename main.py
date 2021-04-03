@@ -75,8 +75,7 @@ async def on_message(message):
         embed = discord.Embed(description=description)
         await msg.channel.send(embed=embed)
         await log(msg.guild.get_channel(log_channel_id), message_log)
-
-            bot.tracker.remove_punishments(message)
+        bot.tracker.remove_punishments(message)
     await bot.process_commands(message)
 
 
