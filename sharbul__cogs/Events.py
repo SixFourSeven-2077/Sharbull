@@ -25,8 +25,9 @@ class EventsCog(commands.Cog):
         print("Commander's latency : " + Fore.YELLOW +
               "{}".format(pingms) + Fore.GREEN + "ms\n" + Style.RESET_ALL)
         guilds_c = len(self.bot.guilds)
+        users_c = len(self.bot.users)
         await self.bot.change_presence(
-            activity=discord.Activity(name="🛡️ protecting {} guilds".format(guilds_c), type=discord.ActivityType.playing))
+            activity=discord.Activity(name="✉️https://discord.gg/WyyTXMCgJ4 | 🛡️ protecting {} guilds and {} users".format(guilds_c, users_c), type=discord.ActivityType.playing))
 
     @commands.Cog.listener()
     async def on_message(self, message):
