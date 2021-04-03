@@ -59,7 +59,6 @@ class EventsCog(commands.Cog):
             await msg.channel.send(embed=embed)
             await log(msg.guild.get_channel(log_channel_id), message_log)
             self.bot.tracker.remove_punishments(message)
-        await self.bot.process_commands(message)
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
