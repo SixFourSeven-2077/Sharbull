@@ -18,6 +18,7 @@ bot.handler.register_extension(bot.tracker)
 
 
 # Cogs
+
 bot.add_cog(Setup.SetupCommandsCog(bot))
 bot.add_cog(Mod.ModCommandsCog(bot))
 bot.add_cog(User.UserCommandsCog(bot))

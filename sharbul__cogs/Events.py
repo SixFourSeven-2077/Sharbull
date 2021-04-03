@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from sharbull__utility.main import seconds_to_text, seconds_to_dhms, log
 from sharbull__db.main import *
+from sharbul__cogs import Tasks
 from colorama import Fore, Style, init
 from datetime import datetime, timedelta
 from captcha import image
@@ -24,10 +25,7 @@ class EventsCog(commands.Cog):
         pingms = round(self.bot.latency * 1000)
         print("Commander's latency : " + Fore.YELLOW +
               "{}".format(pingms) + Fore.GREEN + "ms\n" + Style.RESET_ALL)
-        guilds_c = len(self.bot.guilds)
-        users_c = len(self.bot.users)
-        await self.bot.change_presence(
-            activity=discord.Activity(name="✉️https://discord.gg/WyyTXMCgJ4 | 🛡️ protecting {} guilds and {} users".format(guilds_c, users_c), type=discord.ActivityType.playing))
+        Tasks.BackgroundTasks.update_presence.start(self)
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -159,7 +157,7 @@ class EventsCog(commands.Cog):
             return message.content == string_to_guess and message.channel == message.author.dm_channel
 
         try:
-            message = await bot.wait_for('message', timeout=60.0, check=check)
+            message = await self.bot.wait_for('message', timeout=60.0, check=check)
         except asyncio.TimeoutError:
             embed = discord.Embed(
                 title="Time exceeded, verification has failed.",
