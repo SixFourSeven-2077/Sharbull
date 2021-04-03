@@ -14,9 +14,9 @@ class UserCommandsCog(commands.Cog):
         icon_url = "https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png"
         if page == "commands":
             title = "About the commands"
-            description = "``!!setup`` : Open minimum configuration menu\n - Permission required : administrator\n\n"
-            "``!!mute <Member>`` : Mute a member and report their account to the Sharbull database\n - Permission required : mute members\n\n"
-            "``!!kick <Member>`` : Kick a member and report their account to the Sharbull database\n - Permission required : kick members\n\n"
+            description = "``!!setup`` : Open minimum configuration menu\n - Permission required : administrator\n\n" \
+            "``!!mute <Member>`` : Mute a member and report their account to the Sharbull database\n - Permission required : mute members\n\n"\
+            "``!!kick <Member>`` : Kick a member and report their account to the Sharbull database\n - Permission required : kick members\n\n"\
             "``!!ban <Member>`` : Ban a member and report their account to the Sharbull database\n - Permission required : ban members\n\n" \
             "``!!report <Member> <reason>`` : Report an account to the server and to the Sharbull database\n - Permission required : None\n\n"
 
