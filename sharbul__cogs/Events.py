@@ -152,7 +152,7 @@ class EventsCog(commands.Cog):
                               )
         embed.set_thumbnail(url=member.guild.icon_url)
         embed.set_footer(
-            text="Sharbull Security Guard - You are seeing this because this server enforces a high security verification",
+            text="Sharbull Security Guard - This server enforces a high security verification",
             icon_url="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png"
         )
         await member.send(
