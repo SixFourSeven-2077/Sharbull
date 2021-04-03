@@ -62,8 +62,10 @@ class EventsCog(commands.Cog):
                 await msg.author.ban()
                 increase_user_flag(user_id=msg.author.id, bans_to_add=1)
             embed = discord.Embed(description=description)
-            await msg.channel.send(embed=embed)
-            await log(msg.guild.get_channel(log_channel_id), message_log)
+            if security_activated is not None:
+                await msg.channel.send(embed=embed)
+            if msg.guild.get_channel(log_channel_id) is not None:
+                await log(msg.guild.get_channel(log_channel_id), message_log)
             self.bot.tracker.remove_punishments(message)
 
     @commands.Cog.listener()
@@ -128,14 +130,13 @@ class EventsCog(commands.Cog):
 
         if captcha_level == 2 and trust_score > 9:
             await log(member.guild.get_channel(log_channel_id), "Trust score is high enough, captcha skipped")
-            await member.add_roles(member.guild.get_role(verified_role_id))
+            if member.guild.get_role(verified_role_id) is not None:
+                await member.add_roles(member.guild.get_role(verified_role_id))
             return True
         if captcha_level == 1:
             await log(member.guild.get_channel(log_channel_id), "Captcha level is set to ONE, skipped")
-            try:
+            if member.guild.get_role(verified_role_id) is not None:
                 await member.add_roles(member.guild.get_role(verified_role_id))
-            except:
-                pass
             return True
 
         string_to_guess = ""

@@ -54,7 +54,8 @@ class UserCommandsCog(commands.Cog):
         await ctx.author.send(embed=embed)
         increase_user_flag(user_id=member.id, reports_to_add=1)
         add_report(member.id, ctx.author.id, str(reason))
-        await log(ctx.guild.get_channel(log_channel_id), message)
+        if ctx.guild.get_channel(log_channel_id) is not None:
+            await log(ctx.guild.get_channel(log_channel_id), message)
 
     @commands.command()
     async def support(self, ctx):
