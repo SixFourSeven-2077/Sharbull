@@ -12,6 +12,6 @@ class BackgroundTasks(commands.Cog):
         users_c = len(self.bot.users)
         await self.bot.change_presence(
             activity=discord.Activity(
-                name="✉️https://discord.gg/WyyTXMCgJ4 | 🛡️ protecting {} guilds and {} users".format(guilds_c,
+                name="✉️!!support for support | 🛡️ protecting {} guilds and {} users".format(guilds_c,
                                                                                                       users_c),
                 type=discord.ActivityType.playing))

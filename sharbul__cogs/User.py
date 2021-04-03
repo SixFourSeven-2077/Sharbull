@@ -56,6 +56,13 @@ class UserCommandsCog(commands.Cog):
         add_report(member.id, ctx.author.id, str(reason))
         await log(ctx.guild.get_channel(log_channel_id), message)
 
+    @commands.command()
+    async def support(self, ctx):
+        message = "✉️ Get support here : https://discord.gg/RKURYUeX6t"
+        embed = discord.Embed(description=message)
+        await ctx.send(embed=embed)
+
+
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         message = ""
