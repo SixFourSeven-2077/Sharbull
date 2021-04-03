@@ -147,12 +147,12 @@ class EventsCog(commands.Cog):
         image_data.save("captcha/" + str(member.id) + ".png")
         embed = discord.Embed(title="Greetings, welcome to **{}**".format(member.guild.name),
                               description="Please complete the following captcha to continue.\n" +
-                                          "You have 60 seconds to reply or your access will be denied." +
-                                          "\nThere are only **lowercase** letters."  # in bold because ppl cant read
+                                          "You have **60** seconds to reply or your access will be denied." +
+                                          "\nTHERE ARE ONLY **LOWERCASE** LETTERS (no numbers)."  # in bold because ppl cant read
                               )
         embed.set_thumbnail(url=member.guild.icon_url)
         embed.set_footer(
-            text="Sharbull Security Guard",
+            text="Sharbull Security Guard - You are seeing this because this server enforces a high security verification",
             icon_url="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png"
         )
         await member.send(
