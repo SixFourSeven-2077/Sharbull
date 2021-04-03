@@ -38,8 +38,9 @@ class UserCommandsCog(commands.Cog):
                           "Sharbull has a strict policy on spammers and raiders, zero tolerance is not an option, it's mandatory.\n" \
                           "Our bot is using a shared database across all servers in order to detect toxic people before they even " \
                           "join your server.\n\n" \
-                          "If you are a server administrator, you can start by using the command ``!!setup``\n" \
-                          "Take a look at other commands by sending ``!!help commands`` or ``!!help security``"
+                          "If you are a server administrator, you can start by using the command ``",prefix,"setup``\n" \
+                          "Take a look at other commands by sending ``",prefix,"help commands`` or ``",prefix,"help security``" \
+                          "You can also tag me instead of using the prefix""You can also tag me instead of using the prefix"
 
         embed = discord.Embed(title=title, description=description)
         embed.set_footer(text=footer, icon_url=icon_url)
