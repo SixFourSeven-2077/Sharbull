@@ -69,23 +69,23 @@ def return_info(member: discord.Member, message = ""):
     if member.public_flags.early_supporter is False:
         message += "⚠️ Account has no early supporter badge\n"
         trust_score -= 1
-    if captcha_fails > 3:
+    if captcha_fails > 5:
         message += "⚠️ Account has failed the captcha **{}** times\n".format(captcha_fails)
         trust_score -= 1
-    if mutes > 3:
+    if mutes > 6:
         message += " 	🚩 Account has been muted **{}** times\n".format(mutes)
         trust_score -= 1
-    if reports > 2:
+    if reports > 5:
         message += " 	🚩 Account has been reported **{}** times\n".format(reports)
         trust_score -= 1
-    if kicks > 2:
+    if kicks > 3:
         message += " 	🚩 Account has been kicked **{}** times\n".format(kicks)
         trust_score -= 1
-    if bans > 1:
+    if bans > 2:
         message += " 	🚩 Account has been banned **{}** times\n".format(bans)
         trust_score -= 1
 
-    message += ("🔍 Trust score is **" + str(trust_score) + "**/14")
+    message += ("🔍 Trust score is **" + str(trust_score))
 
     return message, trust_score
 

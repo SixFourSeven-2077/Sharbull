@@ -20,6 +20,7 @@ class UserCommandsCog(commands.Cog):
             "``",prefix,"kick <Member>`` : Kick a member and report their account to the Sharbull database\n - Permission required : kick members\n\n",
             "``",prefix,"ban <Member>`` : Ban a member and report their account to the Sharbull database\n - Permission required : ban members\n\n",
             "``",prefix,"report <Member> <reason>`` : Report an account to the server and to the Sharbull database\n - Permission required : None\n\n",
+            "``",prefix,"flags <Member (optional)>`` : Get the public flags of the user\n - Permission required : None\n\n",
             "``",prefix,"set_prefix <prefix>`` : Sets a new prefix for this bot\n - Permission required : administrator\n\n",
             "You can also tag me instead of using the prefix"))
 
