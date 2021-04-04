@@ -81,7 +81,7 @@ def increase_user_flag(user_id: int, captcha_fails_to_add=None, mutes_to_add=Non
 
     # only add a captcha fails, mute, and report flag (only) once per half hour
     tmt = datetime.datetime.fromtimestamp(os.path.getmtime(path_flags))
-    if (datetime.datetime.now() - tmt).total_seconds() > 1800 and kicks_to_add is None and bans_to_add is None and bypass_cooldown is False:
+    if (datetime.datetime.now() - tmt).total_seconds() > 1800 and kicks_to_add is None and bans_to_add is None or bypass_cooldown is True:
         os.remove(path_flags)
         with open(path_flags, 'w') as f:
             json.dump(new_flags, f)
