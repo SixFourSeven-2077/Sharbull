@@ -193,6 +193,13 @@ class EventsCog(commands.Cog):
                 text="Sharbull Security Guard",
                 icon_url="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png"
             )
-            await member.dm_channel.send(embed=embed)
+            try:
+                await member.dm_channel.send(embed=embed)
+            except:
+                if log_channel_id is not None:
+                    message = ("⚠️Error! Could not send captcha verification, {.mention}'s DM are closed.".format(
+                        member
+                    ))
+                    await log(member.guild.get_channel(log_channel_id), message)
             await member.add_roles(member.guild.get_role(verified_role_id))
         os.remove("captcha/" + str(member.id) + ".png")
