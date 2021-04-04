@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from sharbull__utility.main import seconds_to_text, seconds_to_dhms, log
+from sharbull__utility.main import seconds_to_text, seconds_to_dhms, log, return_info
 from sharbull__db.main import *
 from sharbul__cogs import Tasks
 from colorama import Fore, Style, init
@@ -77,64 +77,21 @@ class EventsCog(commands.Cog):
             return False
 
         add_user(member.id)
-        captcha_fails, mutes, reports, kicks, bans = check_user_flags(member.id)
-        trust_score = 14
-        now = datetime.now()
-        created_at = member.created_at
-        time_since_creation = now - created_at
-        time_since_creation = time_since_creation.total_seconds()
-        time_since_creation_fmt = seconds_to_text(time_since_creation)
 
-        message = "**New member joined** : " + member.mention + "\nAccount created :" + time_since_creation_fmt + \
-                  "\n\n**Noticeable flags** :\n"
 
-        # trust
-        days, hours, minutes, seconds = seconds_to_dhms(time_since_creation)
-        if days < 1:
-            message += " 	🚩 Account was created less than a day ago\n"
-            trust_score -= 3
-        if member.avatar_url == member.default_avatar_url:
-            message += " 	🚩 Account has no custom avatar\n"
-            trust_score -= 2
-        if member.public_flags.hypesquad is False:
-            message += "⚠️ Account has no HypeSquad Team\n"
-            trust_score -= 1
-        if member.premium_since is None:
-            message += "⚠️ Account has no Nitro active sub\n"
-            trust_score -= 1
-        if member.public_flags.partner is False:
-            message += "⚠️ Account has no partner badge\n"
-            trust_score -= 1
-        if member.public_flags.early_supporter is False:
-            message += "⚠️ Account has no early supporter badge\n"
-            trust_score -= 1
-        if captcha_fails > 3:
-            message += "⚠️ Account has failed the captcha **{}** times\n".format(captcha_fails)
-            trust_score -= 1
-        if mutes > 3:
-            message += " 	🚩 Account has been muted **{}** times\n".format(mutes)
-            trust_score -= 1
-        if reports > 2:
-            message += " 	🚩 Account has been reported **{}** times\n".format(reports)
-            trust_score -= 1
-        if kicks > 2:
-            message += " 	🚩 Account has been kicked **{}** times\n".format(kicks)
-            trust_score -= 1
-        if bans > 1:
-            message += " 	🚩 Account has been banned **{}** times\n".format(bans)
-            trust_score -= 1
+        message = "**New member joined** : " + member.mention + "\n"
 
-        message += ("🔍 Trust score is **" + str(trust_score) + "**/14")
+        message, trust_score = return_info(member, message)
 
         await log(member.guild.get_channel(log_channel_id), message)
 
         if captcha_level == 2 and trust_score > 9:
-            await log(member.guild.get_channel(log_channel_id), "Trust score is high enough, captcha skipped")
+            await log(member.guild.get_channel(log_channel_id), "{.mention}'s trust score is high enough, captcha skipped".format(member))
             if member.guild.get_role(verified_role_id) is not None:
                 await member.add_roles(member.guild.get_role(verified_role_id))
             return True
         if captcha_level == 1:
-            await log(member.guild.get_channel(log_channel_id), "Captcha level is set to ONE, skipped")
+            await log(member.guild.get_channel(log_channel_id), "Captcha is disabled, skipped verification")
             if member.guild.get_role(verified_role_id) is not None:
                 await member.add_roles(member.guild.get_role(verified_role_id))
             return True

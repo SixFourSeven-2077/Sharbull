@@ -27,8 +27,8 @@ class SetupCommandsCog(commands.Cog):
                                           "**3.** Edit channels permissions to restrict access to Verified users only.\n\n" +
                                           "**4.** " + captcha_emoji + "``"+prefix+"set_captcha_level <level (1, 2, or 3)>`` to setup captcha policy (learn more with ``"+prefix+"help security``\n" +
                                           " > Level ``1`` : No captcha verification\n" +
-                                          " > Level ``2`` : Captcha verification for suspicious users only\n" +
-                                          " > Level ``3`` : Captcha verification for everyone\n" +
+                                          " > Level ``2`` : Verification for suspicious users only (recommended)\n" +
+                                          " > Level ``3`` : Verification for everyone\n" +
                                           "⚠️ Caution : Users must authorize direct messages from servers, otherwise verification will be impossible.\n\n"+
                                           "**5.** " + activated_emoji + "``"+prefix+"activate`` to start security services"
                               )

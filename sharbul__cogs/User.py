@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from sharbull__db.main import *
-from sharbull__utility.main import log, get_prefix
+from sharbull__utility.main import log, get_prefix, return_info
 import string
 
 class UserCommandsCog(commands.Cog):
@@ -73,3 +73,19 @@ class UserCommandsCog(commands.Cog):
         message = "✉️ Get support here : https://discord.gg/RKURYUeX6t"
         embed = discord.Embed(description=message)
         await ctx.send(embed=embed)
+
+    @commands.cooldown(1, 30, commands.BucketType.guild)
+    @commands.command()
+    async def flags(self, ctx, member:discord.Member = None):
+        if member is None:
+            member = ctx.author
+        add_user(member.id)
+        message, trust_score = return_info(member)
+        embed = discord.Embed(title="Flags information for user {.name}".format(member),
+                              description=message)
+        await ctx.send(embed=embed)
+
+
+
+
+
