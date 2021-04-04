@@ -32,13 +32,13 @@ class UserCommandsCog(commands.Cog):
                           "score, they may get muted, kicked or even banned. "))
         else:
             title = "Welcome to Sharbull Security Bot!"
-            description = "".join(("**What is this bot?**\n\nSharbull is a ready to use bot deployable in minutes, aimed to filter out ",
+            description = "".join(("**What is this bot?**\nSharbull is a ready to use bot deployable in minutes, aimed to filter out ",
                           "selfbot accounts by detecting fake accounts and using a captcha system. ",
                           "With its built-in anti-spam filter this bot will also rate limit humans who flood the chat, as ",
                           "Sharbull has a strict policy on spammers and raiders, zero tolerance is not an option, it's mandatory.\n",
                           "Our bot is using a shared database across all servers in order to detect toxic people before they even ",
                           "join your server.\n\n",
-                          "**Main features** \n\n",
+                          "**Main features** \n",
                           "- Togglable Captcha for joining members\n",
                           "- Shared reputation system between all servers\n",
                           "- AntiSpam operating according to the user's rep\n",
