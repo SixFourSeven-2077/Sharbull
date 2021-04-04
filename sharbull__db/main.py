@@ -9,13 +9,14 @@ def calculate_reputation(user_id: int):
     points = mutes * 2 + reports + kicks * 2 + bans * 2
     return points
 
+
 def add_report(user_id: int, reporter_id: int, reason: str):
     try:
         try:
             os.mkdir("reports/" + str(user_id))
         except:
             pass
-        now = datetime.datetime.now().strftime("%Y-%m-%d.%H:%M:%S")
+        now = datetime.datetime.now().strftime("--%Y-%m-%d_%H_%M_%S")
         report_user_path = "reports/" + str(user_id) + now + ".json"
         report = dict(
             reporter_id=reporter_id,
