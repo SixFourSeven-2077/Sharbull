@@ -34,7 +34,7 @@ class SetupCommandsCog(commands.Cog):
                               )
         await ctx.send(embed=embed)
 
-    @commands.bot_has_permissions(administrator=True)
+    @commands.bot_has_permissions(manage_channels=True)
     @commands.has_permissions(administrator=True)
     @commands.guild_only()
     @commands.command()
@@ -45,7 +45,7 @@ class SetupCommandsCog(commands.Cog):
         embed = discord.Embed(description=message)
         await ctx.send(embed=embed)
 
-    @commands.bot_has_permissions(administrator=True)
+    @commands.bot_has_permissions(manage_roles=True)
     @commands.has_permissions(administrator=True)
     @commands.guild_only()
     @commands.command()
@@ -56,7 +56,6 @@ class SetupCommandsCog(commands.Cog):
         embed = discord.Embed(description=message)
         await ctx.send(embed=embed)
 
-    @commands.bot_has_permissions(administrator=True)
     @commands.has_permissions(administrator=True)
     @commands.guild_only()
     @commands.command()
@@ -71,19 +70,34 @@ class SetupCommandsCog(commands.Cog):
         embed = discord.Embed(description=message)
         await ctx.send(embed=embed)
 
-    @commands.bot_has_permissions(administrator=True)
     @commands.has_permissions(administrator=True)
     @commands.guild_only()
     @commands.command()
     async def activate(self, ctx):
         log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(ctx.guild.id)
-
+        prefix = get_prefix(self, ctx.message)
         if log_channel_id is None or verified_role_id is None or captcha_level is None:
-            message = "⚠️Please perform the initial steps to setup your protection (``!!setup``)"
+            message = "⚠️Please perform the initial steps to setup your protection"
             embed = discord.Embed(description=message)
             await ctx.send(embed=embed)
         else:
             set_guild_setting(ctx.guild.id, new_security_activated=True)
-            message = "✅ Protection is now enabled"
+            message = "✅ Protection is now enabled, run ``"+prefix+"deactivate`` to disable"
+            embed = discord.Embed(description=message)
+            await ctx.send(embed=embed)
+
+    @commands.has_permissions(administrator=True)
+    @commands.guild_only()
+    @commands.command()
+    async def deactivate(self, ctx):
+        log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(ctx.guild.id)
+        prefix = get_prefix(self, ctx.message)
+        if log_channel_id is None or verified_role_id is None or captcha_level is None:
+            message = "⚠️Please perform the initial steps to setup your protection"
+            embed = discord.Embed(description=message)
+            await ctx.send(embed=embed)
+        else:
+            set_guild_setting(ctx.guild.id, new_security_activated=None)
+            message = "✅ Protection is now disabled, run ``",prefix,"activate`` to ensable"
             embed = discord.Embed(description=message)
             await ctx.send(embed=embed)

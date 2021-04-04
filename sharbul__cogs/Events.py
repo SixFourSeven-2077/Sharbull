@@ -31,8 +31,6 @@ class EventsCog(commands.Cog):
                 print(server.name,server.id)
         Tasks.BackgroundTasks.update_presence.start(self)
 
-
-
     @commands.Cog.listener()
     async def on_message(self, message):
         msg = message
@@ -64,8 +62,8 @@ class EventsCog(commands.Cog):
             embed = discord.Embed(description=description)
             if security_activated is not None:
                 await msg.channel.send(embed=embed)
-            if msg.guild.get_channel(log_channel_id) is not None:
-                await log(msg.guild.get_channel(log_channel_id), message_log)
+                if msg.guild.get_channel(log_channel_id) is not None:
+                    await log(msg.guild.get_channel(log_channel_id), message_log)
             self.bot.tracker.remove_punishments(message)
 
     @commands.Cog.listener()
