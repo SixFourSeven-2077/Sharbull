@@ -32,14 +32,21 @@ class UserCommandsCog(commands.Cog):
                           "score, they may get muted, kicked or even banned. "))
         else:
             title = "Welcome to Sharbull Security Bot!"
-            description = "".join(("Sharbull is a ready to use bot deployable in minutes, aimed to filter out ",
+            description = "".join(("**What is this bot?**\n\nSharbull is a ready to use bot deployable in minutes, aimed to filter out ",
                           "selfbot accounts by detecting fake accounts and using a captcha system. ",
                           "With its built-in anti-spam filter this bot will also rate limit humans who flood the chat, as ",
                           "Sharbull has a strict policy on spammers and raiders, zero tolerance is not an option, it's mandatory.\n",
                           "Our bot is using a shared database across all servers in order to detect toxic people before they even ",
                           "join your server.\n\n",
-                          "If you are a server administrator, you can start by using the command ``",prefix,"setup``\n",
-                          "Take a look at other commands by sending ``",prefix,"help commands`` or ``",prefix,"help security``\n\n",
+                          "**Main features** \n\n",
+                          "- Togglable Captcha for joining members\n",
+                          "- Shared reputation system between all servers\n",
+                          "- AntiSpam operating according to the user's rep\n",
+                          "- Selfbots detection and flagging system\n\n",
+                          "**Usage**\n",
+                          "If you are a server administrator, start using this bot by using the command ``",prefix,"setup``\n",
+                          "Take a look at other commands by sending ``",prefix,"help commands`` or ``",prefix,"help security``\n",
+                          "Question? Concerns? Contest a bad reputation? Get the support server link by sending ``",prefix,"support``\n\n",
                           "You can also tag me instead of using the prefix"))
 
         embed = discord.Embed(title=title, description=description)
