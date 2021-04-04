@@ -20,4 +20,5 @@ It also not very customizable as a lot of options are hard coded. I am aware and
 
 ### Discord Bot
 This project is currently running as a public bot, you can invite it here : https://discordapp.com/api/oauth2/authorize?client_id=827467138361065503&permissions=8&scope=bot
+
 Question? Concerns? Contest a bad reputation? Go to the support server here : https://discord.gg/RKURYUeX6t
