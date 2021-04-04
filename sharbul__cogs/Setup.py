@@ -98,6 +98,6 @@ class SetupCommandsCog(commands.Cog):
             await ctx.send(embed=embed)
         else:
             set_guild_setting(ctx.guild.id, new_security_activated=None)
-            message = "✅ Protection is now disabled, run ``",prefix,"activate`` to ensable"
+            message = "✅ Protection is now disabled, run ``"+prefix+"activate`` to ensable"
             embed = discord.Embed(description=message)
             await ctx.send(embed=embed)
