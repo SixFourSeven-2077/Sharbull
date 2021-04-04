@@ -44,7 +44,7 @@ class UserCommandsCog(commands.Cog):
                           "- AntiSpam operating according to the user's rep\n",
                           "- Selfbots detection and flagging system\n\n",
                           "**Usage**\n",
-                          "If you are a server administrator, start using this bot by using the command ``",prefix,"setup``\n",
+                          "If you are a server administrator and would like to use this bot, start now by using the command ``",prefix,"setup``\n",
                           "Take a look at other commands by sending ``",prefix,"help commands`` or ``",prefix,"help security``\n",
                           "Question? Concerns? Contest a bad reputation? Get the support server link by sending ``",prefix,"support``\n\n",
                           "You can also tag me instead of using the prefix"))
