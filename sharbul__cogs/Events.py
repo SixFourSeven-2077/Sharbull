@@ -157,11 +157,17 @@ class EventsCog(commands.Cog):
         )
         file = discord.File("captcha/" + str(member.id) + ".png", filename="image.png")
         embed.set_image(url="attachment://image.png")
-        await member.send(
-            embed=embed,
-            file=file
-        )
-
+        try:
+            await member.send(
+                embed=embed,
+                file=file
+            )
+        except:
+            if log_channel_id is not None:
+                message = ("⚠️ Error! Could not send captcha verification, {.mention}'s DM are closed.".format(
+                    member
+                ))
+                await log(member.guild.get_channel(log_channel_id), message)
         #await member.send(file=discord.File("captcha/" + str(member.id) + ".png"))
 
         def check(message):
@@ -180,7 +186,14 @@ class EventsCog(commands.Cog):
                 text="Sharbull Security Guard",
                 icon_url="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png"
             )
-            await member.dm_channel.send(embed=embed)
+            try:
+                await member.dm_channel.send(embed=embed)
+            except:
+                if log_channel_id is not None:
+                    message = ("⚠️ Error! Could not send captcha verification, {.mention}'s DM are closed.".format(
+                        member
+                    ))
+                    await log(member.guild.get_channel(log_channel_id), message)
             await member.kick(reason="User failed Captcha verification")
             increase_user_flag(user_id=member.id, captcha_fails_to_add=1)
         else:
@@ -197,7 +210,7 @@ class EventsCog(commands.Cog):
                 await member.dm_channel.send(embed=embed)
             except:
                 if log_channel_id is not None:
-                    message = ("⚠️Error! Could not send captcha verification, {.mention}'s DM are closed.".format(
+                    message = ("⚠️ Error! Could not send captcha verification, {.mention}'s DM are closed.".format(
                         member
                     ))
                     await log(member.guild.get_channel(log_channel_id), message)
