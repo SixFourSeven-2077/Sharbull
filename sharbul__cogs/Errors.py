@@ -19,6 +19,11 @@ class ErrorCog(commands.Cog):
             message = "⚠️Wrong command argument."
         elif isinstance(error, commands.MissingRequiredArgument):
             message = "⚠️Missing command argument."
+        elif isinstance(error, commands.CommandOnCooldown):
+            target = "You are"
+            if error.cooldown.type == commands.BucketType.guild:
+                target = "The guild is"
+            message = "⚠️{} being rate limited, please try again in **{}** seconds".format(target, round(error.retry_after))
         else:
             message = "⚠️Unknown error"
             raise error

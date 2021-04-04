@@ -46,6 +46,7 @@ class UserCommandsCog(commands.Cog):
         embed.set_footer(text=footer, icon_url=icon_url)
         await ctx.send(embed=embed)
 
+    @commands.cooldown(1, 30, commands.BucketType.guild)
     @commands.bot_has_permissions(administrator=True)
     @commands.guild_only()
     @commands.command()

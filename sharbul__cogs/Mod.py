@@ -59,14 +59,14 @@ class ModCommandsCog(commands.Cog):
             await log(ctx.guild.get_channel(log_channel_id), message)
 
     @commands.command(pass_context=True)
-    @commands.has_permissions(administrator=True)  # ensure that only administrators can use this command
-    async def set_prefix(self, ctx, prefix):  # command: bl!changeprefix ...
+    @commands.has_permissions(administrator=True)
+    async def set_prefix(self, ctx, prefix):
         with open('config/customprefixes.json', 'r') as f:
             prefixes = json.load(f)
 
         prefixes[str(ctx.guild.id)] = prefix
 
-        with open('config/customprefixes.json', 'w') as f:  # writes the new prefix into the .json
+        with open('config/customprefixes.json', 'w') as f:
             json.dump(prefixes, f, indent=4)
 
         message = "✅ Prefix is now ``{}``".format(prefix)
