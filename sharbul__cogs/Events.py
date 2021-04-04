@@ -43,15 +43,15 @@ class EventsCog(commands.Cog):
             message_log = "User {.mention}".format(msg.author) + " - Bad Reputation points : " + str(points) + "\n"
             if points <= 3:
                 message_log += "User has been warned"
-                description = "{.mention} : stop spamming".format(msg.author)
-            elif points <= 7:
+                description = "{.mention} : stop spamming - warns before mute : {}".format(msg.author, 3-points)
+            elif points <= 6:
                 message_log += "User has been muted (removed verified role)"
-                description = "{.mention} has been muted for spamming".format(message.author)
+                description = "{.mention} has been muted for spamming - warns before kick : {} ".format(message.author, 6-points)
                 await msg.author.remove_roles(msg.guild.get_role(verified_role_id))
                 increase_user_flag(user_id=msg.author.id, mutes_to_add=1)
-            elif points <= 12:
+            elif points <= 9:
                 message_log += "User has been kicked"
-                description="{.mention} has been kicked for spamming".format(msg.author)
+                description="{.mention} has been kicked for spamming - warns before ban : {}".format(msg.author, 12-points)
                 increase_user_flag(user_id=msg.author.id, kicks_to_add=1)
                 await msg.author.kick()
             else:
