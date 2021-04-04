@@ -57,7 +57,7 @@ def check_user_flags(user_id: int):
 
 
 def increase_user_flag(user_id: int, captcha_fails_to_add=None, mutes_to_add=None, reports_to_add=None,
-                       kicks_to_add=None, bans_to_add=None):
+                       kicks_to_add=None, bans_to_add=None, bypass_cooldown=False):
     captcha_fails, mutes, reports, kicks, bans = check_user_flags(user_id)
     path_flags = "user/" + str(user_id) + "/flags.json"
     if captcha_fails_to_add is not None:
@@ -81,7 +81,7 @@ def increase_user_flag(user_id: int, captcha_fails_to_add=None, mutes_to_add=Non
 
     # only add a captcha fails, mute, and report flag (only) once per half hour
     tmt = datetime.datetime.fromtimestamp(os.path.getmtime(path_flags))
-    if (datetime.datetime.now() - tmt).total_seconds() > 1800 and kicks_to_add is None and bans_to_add is None:
+    if (datetime.datetime.now() - tmt).total_seconds() > 1800 and kicks_to_add is None and bans_to_add is None and bypass_cooldown is False:
         os.remove(path_flags)
         with open(path_flags, 'w') as f:
             json.dump(new_flags, f)

@@ -39,17 +39,17 @@ class EventsCog(commands.Cog):
         if self.bot.tracker.is_spamming(message):
             log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(message.guild.id)
             points = calculate_reputation(message.author.id)
+            increase_user_flag(user_id=msg.author.id, reports_to_add=1, bypass_cooldown=True)
             message_log = "User {.mention}".format(msg.author) + " - Bad Reputation points : " + str(points) + "\n"
             if points <= 3:
                 message_log += "User has been warned"
                 description = "{.mention} : stop spamming".format(msg.author)
-                increase_user_flag(user_id=msg.author.id, reports_to_add=1)
-            elif points <= 10:
+            elif points <= 7:
                 message_log += "User has been muted (removed verified role)"
                 description = "{.mention} has been muted for spamming".format(message.author)
                 await msg.author.remove_roles(msg.guild.get_role(verified_role_id))
                 increase_user_flag(user_id=msg.author.id, mutes_to_add=1)
-            elif points <= 30:
+            elif points <= 12:
                 message_log += "User has been kicked"
                 description="{.mention} has been kicked for spamming".format(msg.author)
                 increase_user_flag(user_id=msg.author.id, kicks_to_add=1)
