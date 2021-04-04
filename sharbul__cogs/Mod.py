@@ -14,10 +14,16 @@ class ModCommandsCog(commands.Cog):
     @commands.command()
     async def mute(self, ctx, member: discord.Member):
         log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(ctx.guild.id)
-        await member.remove_roles(ctx.guild.get_role(verified_role_id))
-        message = "✅ Member {.mention} has been muted (removed {.mention})".format(member,
-                                                                                   ctx.guild.get_role(
-                                                                                       verified_role_id))
+        try:
+            await member.remove_roles(ctx.guild.get_role(verified_role_id))
+            message = "✅ Member {.mention} has been muted (removed {.mention})".format(member,
+                                                                                       ctx.guild.get_role(
+                                                                                           verified_role_id))
+        except:
+            message = "✅ Member {.mention} has already been been muted (removed {.mention})".format(member,
+                                                                                                    ctx.guild.get_role(
+                                                                                                        verified_role_id))
+
         embed = discord.Embed(description=message)
         await ctx.send(embed=embed)
         increase_user_flag(user_id=member.id, mutes_to_add=1)
@@ -66,4 +72,3 @@ class ModCommandsCog(commands.Cog):
         message = "✅ Prefix is now ``{}``".format(prefix)
         embed = discord.Embed(description=message)
         await ctx.send(embed=embed)
-
