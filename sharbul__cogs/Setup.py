@@ -26,7 +26,8 @@ class SetupCommandsCog(commands.Cog):
                                           "**4.** " + captcha_emoji + "``!!set_captcha_level <level (1, 2, or 3)>`` to setup captcha policy (learn more with ``!!help security``\n" +
                                           " > Level ``1`` : No captcha verification\n" +
                                           " > Level ``2`` : Captcha verification for suspicious users only\n" +
-                                          " > Level ``3`` : Captcha verification for everyone\n\n" +
+                                          " > Level ``3`` : Captcha verification for everyone\n" +
+                                          "⚠️ Caution : Users must authorize direct messages from servers, otherwise verification will be impossible.\n\n"+
                                           "**5.** " + activated_emoji + "``!!activate`` to start security services"
                               )
         await ctx.send(embed=embed)
