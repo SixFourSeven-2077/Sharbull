@@ -53,7 +53,6 @@ def check_user_flags(user_id: int):
                    settings["reports"], \
                    settings["kicks"], \
                    settings["bans"]
-    print("returned non")
     return None, None, None, None, None
 
 
@@ -80,9 +79,14 @@ def increase_user_flag(user_id: int, captcha_fails_to_add=None, mutes_to_add=Non
         bans=bans
     )
 
-    os.remove(path_flags)
-    with open(path_flags, 'w') as f:
-        json.dump(new_flags, f)
+    # only add a captcha fails, mute, and report flag (only) once per half hour
+    tmt = datetime.datetime.fromtimestamp(os.path.getmtime(path_flags))
+    if (datetime.datetime.now() - tmt).total_seconds() > 1800 and kicks_to_add is None and bans_to_add is None:
+        os.remove(path_flags)
+        with open(path_flags, 'w') as f:
+            json.dump(new_flags, f)
+    else:
+        print("Write skipped, last flags edit :",(datetime.datetime.now() - tmt).total_seconds(), "seconds ago")
 
 
 def add_user(user_id: int):

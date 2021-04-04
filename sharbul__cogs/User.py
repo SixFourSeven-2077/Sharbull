@@ -57,15 +57,15 @@ class UserCommandsCog(commands.Cog):
     @commands.cooldown(1, 30, commands.BucketType.guild)
     @commands.guild_only()
     @commands.command()
-    async def report(self, ctx, member: discord.User, *, reason):
+    async def report(self, ctx, member: discord.User, *args):
         await ctx.message.delete()
         log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(ctx.guild.id)
-        message = "✅ Member {.mention} has been reported : ``{}``\nReporter : {.mention}".format(member, reason,
+        message = "✅ Member {.mention} has been reported : ``Reason : {}``\nReporter : {.mention}".format(member, ' '.join(word[0] for word in args),
                                                                                                  ctx.author)
         embed = discord.Embed(description=message)
         await ctx.author.send(embed=embed)
         increase_user_flag(user_id=member.id, reports_to_add=1)
-        add_report(member.id, ctx.author.id, str(reason))
+        add_report(member.id, ctx.author.id, str(' '.join(word[0] for word in args)))
         if ctx.guild.get_channel(log_channel_id) is not None:
             await log(ctx.guild.get_channel(log_channel_id), message)
 

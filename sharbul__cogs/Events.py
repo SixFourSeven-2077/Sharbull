@@ -119,10 +119,11 @@ class EventsCog(commands.Cog):
             )
         except:
             if log_channel_id is not None:
-                message = ("⚠️ Error! Could not send captcha verification, {.mention}'s DM are closed.".format(
+                message = ("⚠️ Error! Could not send captcha verification, {.mention}'s DM are closed. User is waiting for manual approval.".format(
                     member
                 ))
                 await log(member.guild.get_channel(log_channel_id), message)
+                return False
         #await member.send(file=discord.File("captcha/" + str(member.id) + ".png"))
 
         def check(message):
@@ -141,14 +142,7 @@ class EventsCog(commands.Cog):
                 text="Sharbull Security Guard",
                 icon_url="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png"
             )
-            try:
-                await member.dm_channel.send(embed=embed)
-            except:
-                if log_channel_id is not None:
-                    message = ("⚠️ Error! Could not send captcha verification, {.mention}'s DM are closed.".format(
-                        member
-                    ))
-                    await log(member.guild.get_channel(log_channel_id), message)
+            await member.dm_channel.send(embed=embed)
             await member.kick(reason="User failed Captcha verification")
             increase_user_flag(user_id=member.id, captcha_fails_to_add=1)
         else:

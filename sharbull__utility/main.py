@@ -85,7 +85,7 @@ def return_info(member: discord.Member, message = ""):
         message += " 	🚩 Account has been banned **{}** times\n".format(bans)
         trust_score -= 1
 
-    message += ("🔍 Trust score is **" + str(trust_score))
+    message += ("🔍 Trust score is ``" + str(trust_score)+"``")
 
     return message, trust_score
 
