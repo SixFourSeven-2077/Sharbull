@@ -72,7 +72,11 @@ class EventsCog(commands.Cog):
                     alert_message = "- ALERT Mode is activated"
 
                 message_log += "User has been banned"
-                description="{.mention} has been banned for spamming {}".format(msg.author, alert_message)
+                description="{.mention} has been banned for spamming {} - **ALERT mode has been enabled**, any spamming member will be banned without a warning".format(msg.author, alert_message)
+                alerts[str(message.guild.id)] = True
+                with open('config/alerts.json', 'w') as f:
+                    json.dump(alerts, f, indent=4)
+
                 await msg.author.ban(reason="Spamming", delete_message_days=1)
                 increase_user_flag(user_id=msg.author.id, bans_to_add=1)
             embed = discord.Embed(description=description)
