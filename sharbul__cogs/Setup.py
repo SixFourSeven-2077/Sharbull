@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from sharbull__db.main import *
+from sharbull__utility.main import get_prefix
 
 
 class SetupCommandsCog(commands.Cog):
@@ -13,6 +14,7 @@ class SetupCommandsCog(commands.Cog):
     @commands.command()
     async def setup(self, ctx):
         add_guild(ctx.guild.id)
+        prefix = get_prefix(self, ctx.message)
         log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(ctx.guild.id)
         log_emoji = "✅ " if log_channel_id is not None else "❌ "
         verified_emoji = "✅ " if verified_role_id is not None else "❌ "
@@ -20,18 +22,19 @@ class SetupCommandsCog(commands.Cog):
         activated_emoji = "✅ " if security_activated is not None else "❌ "
         embed = discord.Embed(title="Welcome to Sharbull Security Bot!",
                               description="In order to initially setup Sharbull, you will have to execute a few steps:\n\n" +
-                                          "**1.** " + log_emoji + "``!!set_log_channel`` in a text channel you want the logs to be posted in.\n\n" +
-                                          "**2.** " + verified_emoji + "``!!set_verified_role @a_role`` replace @a_role by the role you want users to get when they get approved by the bot\n\n" +
+                                          "**1.** " + log_emoji + "``"+prefix+"set_log_channel`` in a text channel you want the logs to be posted in.\n\n" +
+                                          "**2.** " + verified_emoji + "``"+prefix+"set_verified_role @a_role`` replace @a_role by the role you want users to get when they get approved by the bot\n\n" +
                                           "**3.** Edit channels permissions to restrict access to Verified users only.\n\n" +
-                                          "**4.** " + captcha_emoji + "``!!set_captcha_level <level (1, 2, or 3)>`` to setup captcha policy (learn more with ``!!help security``\n" +
+                                          "**4.** " + captcha_emoji + "``"+prefix+"set_captcha_level <level (1, 2, or 3)>`` to setup captcha policy (learn more with ``"+prefix+"help security``\n" +
                                           " > Level ``1`` : No captcha verification\n" +
-                                          " > Level ``2`` : Captcha verification for suspicious users only\n" +
-                                          " > Level ``3`` : Captcha verification for everyone\n\n" +
-                                          "**5.** " + activated_emoji + "``!!activate`` to start security services"
+                                          " > Level ``2`` : Verification for suspicious users only (recommended)\n" +
+                                          " > Level ``3`` : Verification for everyone\n" +
+                                          "⚠️ Caution : Users must authorize direct messages from servers, otherwise verification will be impossible.\n\n"+
+                                          "**5.** " + activated_emoji + "``"+prefix+"activate`` to start security services"
                               )
         await ctx.send(embed=embed)
 
-    @commands.bot_has_permissions(administrator=True)
+    @commands.bot_has_permissions(manage_channels=True)
     @commands.has_permissions(administrator=True)
     @commands.guild_only()
     @commands.command()
@@ -42,7 +45,7 @@ class SetupCommandsCog(commands.Cog):
         embed = discord.Embed(description=message)
         await ctx.send(embed=embed)
 
-    @commands.bot_has_permissions(administrator=True)
+    @commands.bot_has_permissions(manage_roles=True)
     @commands.has_permissions(administrator=True)
     @commands.guild_only()
     @commands.command()
@@ -53,7 +56,6 @@ class SetupCommandsCog(commands.Cog):
         embed = discord.Embed(description=message)
         await ctx.send(embed=embed)
 
-    @commands.bot_has_permissions(administrator=True)
     @commands.has_permissions(administrator=True)
     @commands.guild_only()
     @commands.command()
@@ -68,19 +70,34 @@ class SetupCommandsCog(commands.Cog):
         embed = discord.Embed(description=message)
         await ctx.send(embed=embed)
 
-    @commands.bot_has_permissions(administrator=True)
     @commands.has_permissions(administrator=True)
     @commands.guild_only()
     @commands.command()
     async def activate(self, ctx):
         log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(ctx.guild.id)
-
+        prefix = get_prefix(self, ctx.message)
         if log_channel_id is None or verified_role_id is None or captcha_level is None:
-            message = "⚠️Please perform the initial steps to setup your protection (``!!setup``)"
+            message = "⚠️Please perform the initial steps to setup your protection"
             embed = discord.Embed(description=message)
             await ctx.send(embed=embed)
         else:
             set_guild_setting(ctx.guild.id, new_security_activated=True)
-            message = "✅ Protection is now enabled"
+            message = "✅ Protection is now enabled, run ``"+prefix+"deactivate`` to disable"
+            embed = discord.Embed(description=message)
+            await ctx.send(embed=embed)
+
+    @commands.has_permissions(administrator=True)
+    @commands.guild_only()
+    @commands.command()
+    async def deactivate(self, ctx):
+        log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(ctx.guild.id)
+        prefix = get_prefix(self, ctx.message)
+        if log_channel_id is None or verified_role_id is None or captcha_level is None:
+            message = "⚠️Please perform the initial steps to setup your protection"
+            embed = discord.Embed(description=message)
+            await ctx.send(embed=embed)
+        else:
+            set_guild_setting(ctx.guild.id, new_security_activated=None)
+            message = "✅ Protection is now disabled, run ``"+prefix+"activate`` to enable"
             embed = discord.Embed(description=message)
             await ctx.send(embed=embed)

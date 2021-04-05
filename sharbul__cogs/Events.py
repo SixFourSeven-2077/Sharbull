@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from sharbull__utility.main import seconds_to_text, seconds_to_dhms, log
+from sharbull__utility.main import seconds_to_text, seconds_to_dhms, log, return_info
 from sharbull__db.main import *
 from sharbul__cogs import Tasks
 from colorama import Fore, Style, init
@@ -31,8 +31,6 @@ class EventsCog(commands.Cog):
                 print(server.name,server.id)
         Tasks.BackgroundTasks.update_presence.start(self)
 
-
-
     @commands.Cog.listener()
     async def on_message(self, message):
         msg = message
@@ -41,19 +39,19 @@ class EventsCog(commands.Cog):
         if self.bot.tracker.is_spamming(message):
             log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(message.guild.id)
             points = calculate_reputation(message.author.id)
+            increase_user_flag(user_id=msg.author.id, reports_to_add=1, bypass_cooldown=True)
             message_log = "User {.mention}".format(msg.author) + " - Bad Reputation points : " + str(points) + "\n"
             if points <= 3:
                 message_log += "User has been warned"
-                description = "{.mention} : stop spamming".format(msg.author)
-                increase_user_flag(user_id=msg.author.id, reports_to_add=1)
-            elif points <= 10:
+                description = "{.mention} : stop spamming - warns before mute : {}".format(msg.author, 3-points)
+            elif points <= 6:
                 message_log += "User has been muted (removed verified role)"
-                description = "{.mention} has been muted for spamming".format(message.author)
+                description = "{.mention} has been muted for spamming - warns before kick : {} ".format(message.author, 6-points)
                 await msg.author.remove_roles(msg.guild.get_role(verified_role_id))
                 increase_user_flag(user_id=msg.author.id, mutes_to_add=1)
-            elif points <= 30:
+            elif points <= 9:
                 message_log += "User has been kicked"
-                description="{.mention} has been kicked for spamming".format(msg.author)
+                description="{.mention} has been kicked for spamming - warns before ban : {}".format(msg.author, 12-points)
                 increase_user_flag(user_id=msg.author.id, kicks_to_add=1)
                 await msg.author.kick()
             else:
@@ -64,8 +62,8 @@ class EventsCog(commands.Cog):
             embed = discord.Embed(description=description)
             if security_activated is not None:
                 await msg.channel.send(embed=embed)
-            if msg.guild.get_channel(log_channel_id) is not None:
-                await log(msg.guild.get_channel(log_channel_id), message_log)
+                if msg.guild.get_channel(log_channel_id) is not None:
+                    await log(msg.guild.get_channel(log_channel_id), message_log)
             self.bot.tracker.remove_punishments(message)
 
     @commands.Cog.listener()
@@ -77,64 +75,21 @@ class EventsCog(commands.Cog):
             return False
 
         add_user(member.id)
-        captcha_fails, mutes, reports, kicks, bans = check_user_flags(member.id)
-        trust_score = 14
-        now = datetime.now()
-        created_at = member.created_at
-        time_since_creation = now - created_at
-        time_since_creation = time_since_creation.total_seconds()
-        time_since_creation_fmt = seconds_to_text(time_since_creation)
 
-        message = "**New member joined** : " + member.mention + "\nAccount created :" + time_since_creation_fmt + \
-                  "\n\n**Noticeable flags** :\n"
 
-        # trust
-        days, hours, minutes, seconds = seconds_to_dhms(time_since_creation)
-        if days < 1:
-            message += " 	🚩 Account was created less than a day ago\n"
-            trust_score -= 3
-        if member.avatar_url == member.default_avatar_url:
-            message += " 	🚩 Account has no custom avatar\n"
-            trust_score -= 2
-        if member.public_flags.hypesquad is False:
-            message += "⚠️ Account has no HypeSquad Team\n"
-            trust_score -= 1
-        if member.premium_since is None:
-            message += "⚠️ Account has no Nitro active sub\n"
-            trust_score -= 1
-        if member.public_flags.partner is False:
-            message += "⚠️ Account has no partner badge\n"
-            trust_score -= 1
-        if member.public_flags.early_supporter is False:
-            message += "⚠️ Account has no early supporter badge\n"
-            trust_score -= 1
-        if captcha_fails > 3:
-            message += "⚠️ Account has failed the captcha **{}** times\n".format(captcha_fails)
-            trust_score -= 1
-        if mutes > 3:
-            message += " 	🚩 Account has been muted **{}** times\n".format(mutes)
-            trust_score -= 1
-        if reports > 2:
-            message += " 	🚩 Account has been reported **{}** times\n".format(reports)
-            trust_score -= 1
-        if kicks > 2:
-            message += " 	🚩 Account has been kicked **{}** times\n".format(kicks)
-            trust_score -= 1
-        if bans > 1:
-            message += " 	🚩 Account has been banned **{}** times\n".format(bans)
-            trust_score -= 1
+        message = "**New member joined** : " + member.mention + "\n"
 
-        message += ("🔍 Trust score is **" + str(trust_score) + "**/14")
+        message, trust_score = return_info(member, message)
 
         await log(member.guild.get_channel(log_channel_id), message)
 
         if captcha_level == 2 and trust_score > 9:
-            await log(member.guild.get_channel(log_channel_id), "Trust score is high enough, captcha skipped")
+            await log(member.guild.get_channel(log_channel_id), "{.mention}'s trust score is high enough, captcha skipped".format(member))
             if member.guild.get_role(verified_role_id) is not None:
                 await member.add_roles(member.guild.get_role(verified_role_id))
             return True
         if captcha_level == 1:
-            await log(member.guild.get_channel(log_channel_id), "Captcha level is set to ONE, skipped")
+            await log(member.guild.get_channel(log_channel_id), "Captcha is disabled, skipped verification")
             if member.guild.get_role(verified_role_id) is not None:
                 await member.add_roles(member.guild.get_role(verified_role_id))
             return True
@@ -157,11 +112,18 @@ class EventsCog(commands.Cog):
         )
         file = discord.File("captcha/" + str(member.id) + ".png", filename="image.png")
         embed.set_image(url="attachment://image.png")
-        await member.send(
-            embed=embed,
-            file=file
-        )
-
+        try:
+            await member.send(
+                embed=embed,
+                file=file
+            )
+        except:
+            if log_channel_id is not None:
+                message = ("⚠️ Error! Could not send captcha verification, {.mention}'s DM are closed. User is waiting for manual approval.".format(
+                    member
+                ))
+                await log(member.guild.get_channel(log_channel_id), message)
+                return False
         #await member.send(file=discord.File("captcha/" + str(member.id) + ".png"))
 
         def check(message):
@@ -193,6 +155,13 @@ class EventsCog(commands.Cog):
                 text="Sharbull Security Guard",
                 icon_url="https://cdn0.iconfinder.com/data/icons/small-n-flat/24/678094-shield-512.png"
             )
-            await member.dm_channel.send(embed=embed)
+            try:
+                await member.dm_channel.send(embed=embed)
+            except:
+                if log_channel_id is not None:
+                    message = ("⚠️ Error! Could not send captcha verification, {.mention}'s DM are closed.".format(
+                        member
+                    ))
+                    await log(member.guild.get_channel(log_channel_id), message)
             await member.add_roles(member.guild.get_role(verified_role_id))
         os.remove("captcha/" + str(member.id) + ".png")

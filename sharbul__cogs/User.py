@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from sharbull__db.main import *
-from sharbull__utility.main import log, get_prefix
+from sharbull__utility.main import log, get_prefix, return_info
 import string
 
 class UserCommandsCog(commands.Cog):
@@ -20,6 +20,7 @@ class UserCommandsCog(commands.Cog):
             "``",prefix,"kick <Member>`` : Kick a member and report their account to the Sharbull database\n - Permission required : kick members\n\n",
             "``",prefix,"ban <Member>`` : Ban a member and report their account to the Sharbull database\n - Permission required : ban members\n\n",
             "``",prefix,"report <Member> <reason>`` : Report an account to the server and to the Sharbull database\n - Permission required : None\n\n",
+            "``",prefix,"flags <Member (optional)>`` : Get the public flags of the user\n - Permission required : None\n\n",
             "``",prefix,"set_prefix <prefix>`` : Sets a new prefix for this bot\n - Permission required : administrator\n\n",
             "You can also tag me instead of using the prefix"))
 
@@ -54,18 +55,17 @@ class UserCommandsCog(commands.Cog):
         await ctx.send(embed=embed)
 
     @commands.cooldown(1, 30, commands.BucketType.guild)
-    @commands.bot_has_permissions(administrator=True)
     @commands.guild_only()
     @commands.command()
-    async def report(self, ctx, member: discord.User, *, reason):
+    async def report(self, ctx, member: discord.User, *args):
         await ctx.message.delete()
         log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(ctx.guild.id)
-        message = "✅ Member {.mention} has been reported : ``{}``\nReporter : {.mention}".format(member, reason,
+        message = "✅ Member {.mention} has been reported : ``Reason : {}``\nReporter : {.mention}".format(member, ' '.join(word[0] for word in args),
                                                                                                  ctx.author)
         embed = discord.Embed(description=message)
         await ctx.author.send(embed=embed)
         increase_user_flag(user_id=member.id, reports_to_add=1)
-        add_report(member.id, ctx.author.id, str(reason))
+        add_report(member.id, ctx.author.id, str(' '.join(word[0] for word in args)))
         if ctx.guild.get_channel(log_channel_id) is not None:
             await log(ctx.guild.get_channel(log_channel_id), message)
 
@@ -74,3 +74,19 @@ class UserCommandsCog(commands.Cog):
         message = "✉️ Get support here : https://discord.gg/RKURYUeX6t"
         embed = discord.Embed(description=message)
         await ctx.send(embed=embed)
+
+    @commands.cooldown(1, 30, commands.BucketType.guild)
+    @commands.command()
+    async def flags(self, ctx, member:discord.Member = None):
+        if member is None:
+            member = ctx.author
+        add_user(member.id)
+        message, trust_score = return_info(member)
+        embed = discord.Embed(title="Flags information for user {.name}".format(member),
+                              description=message)
+        await ctx.send(embed=embed)
+
+
+
+
+

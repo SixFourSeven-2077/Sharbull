@@ -10,7 +10,12 @@ class ErrorCog(commands.Cog):
     async def on_command_error(self, ctx, error):
         message = ""
         if isinstance(error, commands.BotMissingPermissions):
-            message = "⚠️The bot must be an administrator in order to protect the guild."
+            message = "⚠️The bot must have the following permissions : "\
+                      "- Mute Members\n"\
+                      "- Kick Members\n"\
+                      "- Ban Members\n"\
+                      "- Manage Messages\n"\
+                      "- Basic privileges such as : View and Send Messages, Add reactions, View Channels etc..."
         elif isinstance(error, commands.NoPrivateMessage):
             message = "⚠️Please use this command in a guild channel."
         elif isinstance(error, commands.MissingPermissions):

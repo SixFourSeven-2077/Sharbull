@@ -8,7 +8,7 @@ class ModCommandsCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.bot_has_permissions(administrator=True)
+    @commands.bot_has_permissions(mute_members=True)
     @commands.has_permissions(mute_members=True)
     @commands.guild_only()
     @commands.command()
@@ -30,7 +30,7 @@ class ModCommandsCog(commands.Cog):
         if ctx.guild.get_channel(log_channel_id) is not None:
             await log(ctx.guild.get_channel(log_channel_id), message)
 
-    @commands.bot_has_permissions(administrator=True)
+    @commands.bot_has_permissions(kick_members=True)
     @commands.has_permissions(kick_members=True)
     @commands.guild_only()
     @commands.command()
@@ -44,7 +44,7 @@ class ModCommandsCog(commands.Cog):
         if ctx.guild.get_channel(log_channel_id) is not None:
             await log(ctx.guild.get_channel(log_channel_id), message)
 
-    @commands.bot_has_permissions(administrator=True)
+    @commands.bot_has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
     @commands.guild_only()
     @commands.command()
