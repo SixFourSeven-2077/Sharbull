@@ -10,6 +10,8 @@ def get_prefix(client, message):
         return prefixes[str(message.guild.id)]
     except KeyError:
         return "!!"
+    except AttributeError:
+        return "!!"
 
 
 def seconds_to_text(secs):
