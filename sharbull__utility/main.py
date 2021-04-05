@@ -8,7 +8,7 @@ def get_prefix(client, message):
         prefixes = json.load(f)
     try:
         return prefixes[str(message.guild.id)]
-    except KeyError:
+    except :
         return "!!"
 
 
