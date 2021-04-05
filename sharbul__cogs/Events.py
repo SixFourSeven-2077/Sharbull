@@ -40,6 +40,18 @@ class EventsCog(commands.Cog):
             log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(message.guild.id)
             points = calculate_reputation(message.author.id)
             increase_user_flag(user_id=msg.author.id, reports_to_add=1, bypass_cooldown=True)
+            alert_activated = False
+            with open('config/alerts.json', 'r') as f:
+                alerts = json.load(f)
+            try:
+                alert_activated = alerts[str(message.guild.id)]
+                if alert_activated is False:
+                    pass
+                else:
+                    points = 99
+            except:
+                pass
+
             message_log = "User {.mention}".format(msg.author) + " - Bad Reputation points : " + str(points) + "\n"
             if points <= 3:
                 message_log += "User has been warned"
@@ -53,11 +65,19 @@ class EventsCog(commands.Cog):
                 message_log += "User has been kicked"
                 description="{.mention} has been kicked for spamming - warns before ban : {}".format(msg.author, 12-points)
                 increase_user_flag(user_id=msg.author.id, kicks_to_add=1)
-                await msg.author.kick()
+                await msg.author.kick(reason="Spamming")
             else:
+                alert_message = ""
+                if alert_activated is True:
+                    alert_message = "- ALERT Mode is activated"
+
                 message_log += "User has been banned"
-                description="{.mention} has been banned for spamming".format(msg.author)
-                await msg.author.ban()
+                description="{.mention} has been banned for spamming {} - **ALERT mode has been enabled**, any spamming member will be banned without a warning".format(msg.author, alert_message)
+                alerts[str(message.guild.id)] = True
+                with open('config/alerts.json', 'w') as f:
+                    json.dump(alerts, f, indent=4)
+
+                await msg.author.ban(reason="Spamming", delete_message_days=1)
                 increase_user_flag(user_id=msg.author.id, bans_to_add=1)
             embed = discord.Embed(description=description)
             if security_activated is not None:
@@ -82,6 +102,7 @@ class EventsCog(commands.Cog):
         message, trust_score = return_info(member, message)
 
         await log(member.guild.get_channel(log_channel_id), message)
+
 
         if captcha_level == 2 and trust_score > 9:
             await log(member.guild.get_channel(log_channel_id), "{.mention}'s trust score is high enough, captcha skipped".format(member))

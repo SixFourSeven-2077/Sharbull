@@ -4,6 +4,7 @@ from sharbull__db.main import *
 from sharbull__utility.main import log, get_prefix, return_info
 import string
 
+
 class UserCommandsCog(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -19,18 +20,29 @@ class UserCommandsCog(commands.Cog):
             "``",prefix,"mute <Member>`` : Mute a member and report their account to the Sharbull database\n - Permission required : mute members\n\n",
             "``",prefix,"kick <Member>`` : Kick a member and report their account to the Sharbull database\n - Permission required : kick members\n\n",
             "``",prefix,"ban <Member>`` : Ban a member and report their account to the Sharbull database\n - Permission required : ban members\n\n",
+            "``",prefix,"alert`` : Toggles ALERT mode (any spamming member will be banned without a warning)\n - Permission required : ban members\n\n",
             "``",prefix,"report <Member> <reason>`` : Report an account to the server and to the Sharbull database\n - Permission required : None\n\n",
             "``",prefix,"flags <Member (optional)>`` : Get the public flags of the user\n - Permission required : None\n\n",
+            "``",prefix,"status`` : See the enabled protection features on this server\n - Permission required : None\n\n",
             "``",prefix,"set_prefix <prefix>`` : Sets a new prefix for this bot\n - Permission required : administrator\n\n",
             "You can also tag me instead of using the prefix"))
 
         elif page == "security":
             title = "About the security"
-            description = "".join(("Sharbull automatically detects if an account is fake or likely to be a ",
+            description = "".join(("**Automatic flagging**\nSharbull automatically detects if an account is fake or likely to be a ",
                           "selfbot by checking their avatar, creation date, user flags and reports. ",
-                          "With this data, a trust score is calculated and further actions may be taken.",
-                          "An antispam is also included, which automatically flags the user. Depending on their trust ",
-                          "score, they may get muted, kicked or even banned. "))
+                          "With this data, a trust score is calculated and further actions may be taken :\n\n",
+                          "**Captcha**\nCaptchas are widely used everywhere and have proven to be effective against selfbots, ",
+                          "and Sharbull uses 3 levels of protection : \n",
+                          "- Level One : Users can join your server without having to complete a challenge.\n",
+                          "- Level Two : By looking at the user's flags, Sharbull enables or not the challenge for a suspicious user.\n",
+                          "- Level Three : Everyone including clean users will have to complete a challenge.\n\n",
+                          "**AntiSpam**\n","An antispam is also included, which automatically flags the user. Depending on their trust ",
+                          "score, they may get muted, kicked or even banned.\n\n",
+                          "**ALERT mode**\n", "When you enable alert mode, any spamming member will be banned without a warning. ",
+                          "(*Sharbull protection services must be enabled first*) ",
+                          "Alert mode is automatically enabled when a member reaches the spamming ban treshold. If you want the bot to ignore ",
+                          "a channel, block the Read Messages permission of this channel to Sharbull."))
         else:
             title = "Welcome to Sharbull Security Bot!"
             description = "".join(("**What is this bot?**\nSharbull is a ready to use bot deployable in minutes, aimed to filter out ",
@@ -86,6 +98,39 @@ class UserCommandsCog(commands.Cog):
                               description=message)
         await ctx.send(embed=embed)
 
+    @commands.cooldown(1, 30, commands.BucketType.guild)
+    @commands.command()
+    async def status(self, ctx):
+        log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(ctx.guild.id)
+        is_alert = False
+        if captcha_level is None:
+            captcha_level = 0
+        if security_activated is None:
+            security_activated = False
+        with open('config/alerts.json', 'r') as f:
+            alerts = json.load(f)
+        try:
+            is_alert = alerts[str(ctx.guild.id)]
+        except:
+            pass
+
+        verified_role = ctx.guild.get_role(verified_role_id)
+        is_alert_emoji = "✅ " if is_alert is not False else "❌ "
+        verified_emoji = "✅ " if verified_role is not None else "❌ "
+        captcha_emoji = "✅ " if captcha_level is not None else "❌ "
+        activated_emoji = "✅ " if security_activated is not None else "❌ "
+
+        if verified_role is not None:
+            verified_role_fmt = verified_role.mention
+        else:
+            verified_role_fmt = "No role"
+        message = "".join((verified_emoji, "Verified role: ", verified_role_fmt, "\n",
+                           captcha_emoji, "Captcha verification level : ", str(captcha_level),"\n",
+                           activated_emoji,"Protection enabled : ", str(security_activated), "\n",
+                           is_alert_emoji,"ALERT mode enabled : ", str(is_alert)))
+        embed = discord.Embed(title="{}'s status".format(ctx.guild.name),
+                              description=message)
+        await ctx.send(embed=embed)
 
 
 
