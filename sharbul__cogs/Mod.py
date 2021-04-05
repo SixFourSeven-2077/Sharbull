@@ -58,6 +58,43 @@ class ModCommandsCog(commands.Cog):
         if ctx.guild.get_channel(log_channel_id) is not None:
             await log(ctx.guild.get_channel(log_channel_id), message)
 
+    @commands.bot_has_permissions(ban_members=True)
+    @commands.has_permissions(ban_members=True)
+    @commands.guild_only()
+    @commands.command()
+    async def alert(self, ctx):
+        log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(ctx.guild.id)
+        if security_activated is True:
+            message = ""
+            with open('config/alerts.json', 'r') as f:
+                alerts = json.load(f)
+            try:
+                alert_activated = alerts[str(ctx.guild.id)]
+                if alert_activated is False:
+                    alerts[str(ctx.guild.id)] = True
+                    message = "✅ Alert mode is activated, any spamming member will be banned without a warning."
+                else:
+                    alerts[str(ctx.guild.id)] = False
+                    message = "✅ Alert mode is deactivated"
+
+            except KeyError:
+                alerts[str(ctx.guild.id)] = True
+                message = "✅ Alert mode is activated, any spamming member will be banned without a warning."
+            except:
+                print("oh no an error")
+
+            with open('config/alerts.json', 'w') as f:
+                json.dump(alerts, f, indent=4)
+
+            embed = discord.Embed(description=message)
+            await ctx.send(embed=embed)
+            if ctx.guild.get_channel(log_channel_id) is not None:
+                await log(ctx.guild.get_channel(log_channel_id), message)
+        else:
+            message = "⚠️Security services are not enabled, cannot toggle ALERT mode"
+            embed = discord.Embed(description=message)
+            await ctx.send(embed=embed)
+
     @commands.command(pass_context=True)
     @commands.has_permissions(administrator=True)
     async def set_prefix(self, ctx, prefix):
