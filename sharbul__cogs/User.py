@@ -117,8 +117,8 @@ class UserCommandsCog(commands.Cog):
         verified_role = ctx.guild.get_role(verified_role_id)
         is_alert_emoji = "✅ " if is_alert is not False else "❌ "
         verified_emoji = "✅ " if verified_role is not None else "❌ "
-        captcha_emoji = "✅ " if captcha_level is not None else "❌ "
-        activated_emoji = "✅ " if security_activated is not None else "❌ "
+        captcha_emoji = "✅ " if captcha_level != 0 else "❌ "
+        activated_emoji = "✅ " if security_activated is True else "❌ "
 
         if verified_role is not None:
             verified_role_fmt = verified_role.mention
