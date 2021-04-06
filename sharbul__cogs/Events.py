@@ -123,7 +123,7 @@ class EventsCog(commands.Cog):
         image_data.save("captcha/" + str(member.id) + ".png")
         embed = discord.Embed(title="Greetings, welcome to **{}**".format(member.guild.name),
                               description="Please complete the following captcha to continue.\n" +
-                                          "You have **60** seconds to reply or your access will be denied." +
+                                          "You have ``5 minutes`` to reply or your access will be denied." +
                                           "\nTHERE ARE ONLY **LOWERCASE** LETTERS (no numbers)."  # in bold because ppl cant read
                               )
         embed.set_thumbnail(url=member.guild.icon_url)
@@ -144,14 +144,15 @@ class EventsCog(commands.Cog):
                     member
                 ))
                 await log(member.guild.get_channel(log_channel_id), message)
-                return False
+            print(member.guild.name, member.guild.name, ": kicked", member.name, member.id)
+            return False
         #await member.send(file=discord.File("captcha/" + str(member.id) + ".png"))
 
         def check(message):
             return message.content == string_to_guess and message.channel == message.author.dm_channel
 
         try:
-            message = await self.bot.wait_for('message', timeout=60.0, check=check)
+            message = await self.bot.wait_for('message', timeout=300.0, check=check)
         except asyncio.TimeoutError:
             embed = discord.Embed(
                 title="Time exceeded, verification has failed.",
