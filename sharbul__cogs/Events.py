@@ -36,8 +36,9 @@ class EventsCog(commands.Cog):
         msg = message
         add_user(message.author.id)
         await self.bot.handler.propagate(message)
-        if self.bot.tracker.is_spamming(message):
-            log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(message.guild.id)
+        log_channel_id, verified_role_id, captcha_level, security_activated = check_guild_setup(message.guild.id)
+        if self.bot.tracker.is_spamming(message) and security_activated is True:
+
             points = calculate_reputation(message.author.id)
             increase_user_flag(user_id=msg.author.id, reports_to_add=1, bypass_cooldown=True)
             alert_activated = False
@@ -80,10 +81,9 @@ class EventsCog(commands.Cog):
                 await msg.author.ban(reason="Spamming", delete_message_days=1)
                 increase_user_flag(user_id=msg.author.id, bans_to_add=1)
             embed = discord.Embed(description=description)
-            if security_activated is not None:
-                await msg.channel.send(embed=embed)
-                if msg.guild.get_channel(log_channel_id) is not None:
-                    await log(msg.guild.get_channel(log_channel_id), message_log)
+            await msg.channel.send(embed=embed)
+            if msg.guild.get_channel(log_channel_id) is not None:
+                await log(msg.guild.get_channel(log_channel_id), message_log)
             self.bot.tracker.remove_punishments(message)
 
     @commands.Cog.listener()
@@ -144,7 +144,7 @@ class EventsCog(commands.Cog):
                     member
                 ))
                 await log(member.guild.get_channel(log_channel_id), message)
-            print(member.guild.name, member.guild.name, ": kicked", member.name, member.id)
+            print(member.guild.name, member.guild.name, ": member has blocked PMs :", member.name, member.id)
             return False
         #await member.send(file=discord.File("captcha/" + str(member.id) + ".png"))
 
